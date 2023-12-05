@@ -9,7 +9,7 @@ const studentsList = [
     surname: 'Гусев',
     patronymic: 'Сергеевич',
     birthDate: '2004-11-30',
-    startEducationYear: 2020,
+    startEducationYear: 2023,
     faculty: 'Информатика и системы управления'
   },
   {
@@ -124,19 +124,28 @@ function getStudentItem(studentObj) {
   let studentsAge = Math.floor((currentDate.getTime() - birthDate.getTime() - hoursBirthDate) / (365 * 24 * 60 * 60 * 1000));
   cellAge.textContent = localFormatBirthDate + ` (${studentsAge}` + ' ' + `${ageWord(studentsAge)})`;
 
-  console.log('birthDate', birthDate);
-  console.log('hoursBirthDate', hoursBirthDate);
-  console.log('currentDate', currentDate);
+  // console.log('birthDate', birthDate);
+  // console.log('hoursBirthDate', hoursBirthDate);
+  // console.log('currentDate', currentDate);
 
   //считаем годы обучения
   let startEducationDate = studentObj.startEducationYear;
   let endEducationYear = startEducationDate + STUDY_PERIOD;
   let studyCourse = currentYear - startEducationDate;
 
+  if (currentYear == startEducationDate) {
+    studyCourse = 1;
+  }
+
   if (currentYear > endEducationYear || (currentYear === endEducationYear && currentMonth >= 8)) cellStudyPeriod.textContent = startEducationDate + `-` + endEducationYear + ' (закончил)';
 
   if (currentYear < endEducationYear || (currentYear === endEducationYear && currentMonth < 8))
     cellStudyPeriod.textContent = startEducationDate + `-` + endEducationYear + ` (${studyCourse} курс)`;
+
+  console.log('currentYear', currentYear);
+  console.log('startEducationDate', startEducationDate);
+  console.log('endEducationYear', endEducationYear);
+  console.log('studyCourse', studyCourse);
 
   tableRow.append(rowNumber, cellFullName, cellFaculty, cellAge, cellStudyPeriod);
 }
