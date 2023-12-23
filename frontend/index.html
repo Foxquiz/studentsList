@@ -7,153 +7,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Список студентов</title>
 
-  <link rel="stylesheet" href="css/normalize.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/style.css">
-  <script defer src="main.js"></script>
+  <link href="css/normalize.css" rel="stylesheet">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <script src="main.js" defer></script>
 </head>
 
 <body>
-  <!-- Этап 1. Создайте верстку элементов, которые будут статичны (неизменны).  -->
+  <dialog style="padding: 0;">
+    <div id="modal-box" class="modal-box">
+      <h5 class="modal-title mb-3">Изменить данные студента</h5>
+      <form id="modal-body" class="d-flex flex-column mb-3">
+
+      </form>
+      <button id="save-modal-btn" class="btn btn-primary" form="modal-body" type="submit">Save</button>
+      <button id="close-modal-btn" class="btn btn-secondary ms-3" type="button">Close</button>
+    </div>
+  </dialog>
   <section class="container pt-5 mb-3">
     <h1 class="mb-3">Список студентов</h1>
-    <form id="creation-form" class="input-group row">
+    <form class="input-group row" id="creation-form">
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-name" class="form-label">
+        <label class="form-label" for="input-name">
           Имя студента
         </label>
-        <input type="text" class="form-control" id="input-name" placeholder="Иван" required>
+        <input class="form-control mb-1" id="input-name" type="text" name="Имя" placeholder="Иван" required>
       </div>
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-surname" class="form-label">
+        <label class="form-label" for="input-surname">
           Фамилия студента
         </label>
-        <input type="text" class="form-control" id="input-surname" placeholder="Иванов" required>
+        <input class="form-control mb-1" id="input-surname" type="text" name="Фамилия" placeholder="Иванов" required>
       </div>
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-patronymic" class="form-label">
+        <label class="form-label" for="input-patronymic">
           Отчество студента
         </label>
-        <input type="text" class="form-control" id="input-patronymic" placeholder="Иванович" required>
-      </div>
-      <div class="mb-3 col-12 col-md-4">
-        <label for="input-birthDate" class="form-label">
-          Дата рождения
-        </label>
-        <input type="date" class="form-control" id="input-birthDate" min="1900-01-01" required>
-      </div>
-      <div class="mb-3 col-12 col-md-4">
-        <label for="input-startEducationYear" class="form-label">
-          Год начала обучения
-        </label>
-        <input type="number" class="form-control" id="input-startEducationYear" step="1" min="2000" placeholder="2020"
+        <input class="form-control mb-1" id="input-patronymic" type="text" name="Отчество" placeholder="Иванович"
           required>
       </div>
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-faculty" class="form-label">
+        <label class="form-label" for="input-birthDate">
+          Дата рождения
+        </label>
+        <input class="form-control mb-1" id="input-birthDate" type="date" min="1900-01-01" name="Дата рождения"
+          required>
+      </div>
+      <div class="mb-3 col-12 col-md-4">
+        <label class="form-label" for="input-startEducationYear">
+          Год начала обучения
+        </label>
+        <input class="form-control mb-1" id="input-startEducationYear" type="number" step="1" placeholder="2020"
+          name="Год начала обучения" required>
+      </div>
+      <div class="mb-3 col-12 col-md-4">
+        <label class="form-label" for="input-faculty">
           Факультет
         </label>
-        <input type="text" class="form-control" id="input-faculty" placeholder="Биологический" required>
-      </div>
-      <div id="errorField" class="d-flex flex-column align-items-center">
-
+        <input class="form-control mb-1" id="input-faculty" type="text" name="Факультет" placeholder="Биологический"
+          required>
       </div>
       <div class="d-flex">
-        <button id="addBtn" type="submit" class="btn btn-success ms-auto me-auto">Добавить студента</button>
+        <button class="btn btn-success ms-auto me-auto" id="addBtn" type="submit">Добавить студента</button>
       </div>
     </form>
   </section>
   <section class="container mb-5">
-    <form id="filter-form" class="input-group row justify-content-evenly">
+    <form class="input-group row justify-content-evenly" id="filter-form">
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-filterFullName" class="form-label">
+        <label class="form-label" for="input-filterFullName">
           Ф. И. О. студента
         </label>
-        <input type="text" class="form-control" id="input-filterFullName" placeholder="Иванов Иван Иванович">
+        <input class="form-control" id="input-filterFullName" type="text" placeholder="Иванов Иван Иванович">
       </div>
       <div class="mb-3 col-12 col-md-4">
-        <label for="input-filterFaculty" class="form-label">
+        <label class="form-label" for="input-filterFaculty">
           Факультет
         </label>
-        <input type="text" class="form-control" id="input-filterFaculty" placeholder="Биологический">
+        <input class="form-control" id="input-filterFaculty" type="text" placeholder="Биологический">
       </div>
       <div class="mb-3 col-12 col-md-2">
-        <label for="input-filterStartEducationYear" class="form-label">
+        <label class="form-label" for="input-filterStartEducationYear">
           Год начала обучения
         </label>
-        <input type="number" class="form-control" id="input-filterStartEducationYear" step="1" min="2000"
+        <input class="form-control" id="input-filterStartEducationYear" type="number" step="1" min="2000"
           placeholder="2020">
       </div>
       <div class="mb-3 col-12 col-md-2">
-        <label for="input-filterEndEducationYear" class="form-label">
+        <label class="form-label" for="input-filterEndEducationYear">
           Год окончания обучения
         </label>
-        <input type="number" class="form-control" id="input-filterEndEducationYear" step="1" min="2000"
+        <input class="form-control" id="input-filterEndEducationYear" type="number" step="1" min="2000"
           placeholder="2024">
       </div>
-      <div id="errorFieldFilter" class="d-flex flex-column align-items-center">
-
-      </div>
-      <div class="d-flex">
-        <button type="submit" id="filterBtn" class="btn btn-primary ms-auto me-3">Отфильтровать</button>
-        <button id="declineFilterBtn" class="btn btn-warning btn-sm me-auto">Отменить фильтрацию</button>
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-secondary me-3" id="declineFilterBtn">Отменить фильтрацию</button>
+        <button class="btn btn-secondary" id="declineSortBtn">Отменить сортировку</button>
       </div>
     </form>
   </section>
   <section class="data-table">
     <div class="container">
-      <table class="table">
+      <table class="table mb-5">
         <thead>
-          <tr>
+          <tr id="tableTR">
             <th scope="col">#</th>
-            <th scope="col" class="relative_th">
-              <span>Ф. И. О. студента</span>
-              <button id="Fullname" class="btn btn-link btn_table">
-                <svg class="arrow-img" xmlns="http://www.w3.org/2000/svg" width="28" height="12"
-                  viewBox="0 0 28 12" fill="none">
-                  <path
-                    d="M24.3536 6.35355C24.5488 6.15829 24.5488 5.84171 24.3536 5.64645L21.1716 2.46447C20.9763 2.2692 20.6597 2.2692 20.4645 2.46447C20.2692 2.65973 20.2692 2.97631 20.4645 3.17157L23.2929 6L20.4645 8.82843C20.2692 9.02369 20.2692 9.34027 20.4645 9.53553C20.6597 9.7308 20.9763 9.7308 21.1716 9.53553L24.3536 6.35355ZM4 6.5H24V5.5H4V6.5Z"
-                     />
-                </svg>
+            <th class="relative_th" scope="col">
+              <button class="btn btn-link btn_table" id="Fullname" data-dir="false">
+                Ф. И. О. студента
               </button>
             </th>
-            <th scope="col" class="relative_th">
-              <span>Факультет</span>
-              <button id="Faculty" class="btn btn-link btn_table">
-                <svg class="arrow-img" xmlns="http://www.w3.org/2000/svg" width="28" height="12"
-                  viewBox="0 0 28 12" fill="none">
-                  <path
-                    d="M24.3536 6.35355C24.5488 6.15829 24.5488 5.84171 24.3536 5.64645L21.1716 2.46447C20.9763 2.2692 20.6597 2.2692 20.4645 2.46447C20.2692 2.65973 20.2692 2.97631 20.4645 3.17157L23.2929 6L20.4645 8.82843C20.2692 9.02369 20.2692 9.34027 20.4645 9.53553C20.6597 9.7308 20.9763 9.7308 21.1716 9.53553L24.3536 6.35355ZM4 6.5H24V5.5H4V6.5Z"
-                     />
-                </svg>
+            <th class="relative_th" scope="col">
+              <button class="btn btn-link btn_table" id="Faculty" data-dir="false">
+                Факультет
               </button>
             </th>
-            <th scope="col" class="relative_th">
-              <span>Дата рождения и возраст</span>
-              <button id="DateAge" class="btn btn-link btn_table">
-                <svg class="arrow-img" xmlns="http://www.w3.org/2000/svg" width="28" height="12"
-                  viewBox="0 0 28 12" fill="none">
-                  <path
-                    d="M24.3536 6.35355C24.5488 6.15829 24.5488 5.84171 24.3536 5.64645L21.1716 2.46447C20.9763 2.2692 20.6597 2.2692 20.4645 2.46447C20.2692 2.65973 20.2692 2.97631 20.4645 3.17157L23.2929 6L20.4645 8.82843C20.2692 9.02369 20.2692 9.34027 20.4645 9.53553C20.6597 9.7308 20.9763 9.7308 21.1716 9.53553L24.3536 6.35355ZM4 6.5H24V5.5H4V6.5Z"
-                     />
-                </svg>
+            <th class="relative_th" scope="col">
+              <button class="btn btn-link btn_table" id="DateAge" data-dir="false">
+                Дата рождения и возраст
               </button>
             </th>
-            <th scope="col" class="relative_th">
-              <span>Годы обучения и номер курса</span>
-              <button id="StudyYears" class="btn btn-link btn_table">
-                <svg class="arrow-img" xmlns="http://www.w3.org/2000/svg" width="28" height="12"
-                  viewBox="0 0 28 12" fill="none">
-                  <path
-                    d="M24.3536 6.35355C24.5488 6.15829 24.5488 5.84171 24.3536 5.64645L21.1716 2.46447C20.9763 2.2692 20.6597 2.2692 20.4645 2.46447C20.2692 2.65973 20.2692 2.97631 20.4645 3.17157L23.2929 6L20.4645 8.82843C20.2692 9.02369 20.2692 9.34027 20.4645 9.53553C20.6597 9.7308 20.9763 9.7308 21.1716 9.53553L24.3536 6.35355ZM4 6.5H24V5.5H4V6.5Z"
-                     />
-                </svg>
+            <th class="relative_th" scope="col">
+              <button class="btn btn-link btn_table" id="StudyYears" data-dir="false">
+                Годы обучения и номер курса
               </button>
             </th>
+            <th scope="col"></th>
+            <th scope="col"></th>
           </tr>
         </thead>
-        <tbody id="studentsTable" class="table-group-divider">
+        <tbody class="table-group-divider" id="studentsTable">
         </tbody>
       </table>
     </div>
