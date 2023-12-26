@@ -1,5 +1,4 @@
 (async () => {
-
   let studentsList = [];
 
   //запрос текущего списка с сервера
@@ -30,6 +29,7 @@
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
   const STUDY_PERIOD = 4;
+  const entryAge = 16;
 
   let studentsTable = document.querySelector('#studentsTable');
 
@@ -53,6 +53,21 @@
     return ageWord;
   }
 
+  function getStudentAge(birthdayObj) {
+    let birthday = new Date(birthdayObj);
+    birthday.setHours(0);
+    let studentsAge = currentYear - birthday.getFullYear();
+    let month = currentDate.getMonth() - birthday.getMonth();
+    if (month < 0 || (month === 0 && currentDate.getDate() < birthday.getDate())) {
+      studentsAge -= 1;
+    }
+    let localFormatbirthday = toLocalFormat.format(birthday);
+    return {
+      studentsAge,
+      localFormatbirthday,
+    }
+  }
+
   //*создание строки в таблице по одному студенту
   function getStudentItem(studentObj, { onChange, onDelete }) {
     const tableRow = document.createElement('tr');
@@ -72,12 +87,9 @@
     cellFullName.textContent = `${studentObj.surname} ${studentObj.name} ${studentObj.lastname}`;
     cellFaculty.textContent = studentObj.faculty;
 
-    //!вынести в отдельную функцию
     //считаем текущий возраст
-    let birthday = new Date(studentObj.birthday);
-    birthday.setHours(0);
-    let localFormatbirthday = toLocalFormat.format(birthday);
-    let studentsAge = Math.floor((currentDate.getTime() - birthday.getTime()) / (365 * 24 * 60 * 60 * 1000));
+    let localFormatbirthday = getStudentAge(studentObj.birthday).localFormatbirthday;
+    let studentsAge = getStudentAge(studentObj.birthday).studentsAge;
     cellAge.textContent = `${localFormatbirthday} (${studentsAge} ${ageWord(studentsAge)})`;
 
     //считаем годы обучения
@@ -145,6 +157,7 @@
 
   //форма добавления студента
   const formAdding = document.querySelector('#creation-form');
+  const studyStartInput = document.querySelector('#input-startEducationYear');
 
   //значение input
   function getInputValue(inputElement) {
@@ -155,8 +168,8 @@
   //*функции валидации input
   function validateText(text) {
     let checkedText = false;
-    const regexp = /[а-яА-ЯёЁ]/i;
-    if (text.length > 0 && regexp.test(text)) checkedText = text;
+    const regexp = /[^а-яА-ЯёЁ\s]/gi;
+    if (text.length > 0 && !regexp.test(text)) checkedText = text;
     return checkedText;
   };
 
@@ -172,11 +185,31 @@
     return text;
   }
 
-  function validateDate(date) {
+  function validateDate(dateElement) {
+    let date = getInputValue(dateElement);
     const birthday = new Date(date);
+    birthday.setHours(0, 0, 0, 0);
     const startDate = new Date('1900-01-01');
+
+    console.log('dateElement', dateElement);
+    let findStudyStartElement = ((dateElement.parentNode).parentNode).querySelector('[name="Год начала обучения"]');
+    console.log('findStudyStartElement', findStudyStartElement);
+
+    let studyStartValue = new Date(`${getInputValue(findStudyStartElement)}-08-01`);
+    studyStartValue.setHours(0, 0, 0, 0);
+
+    let studentEntryAge = studyStartValue.getFullYear() - birthday.getFullYear();
+    let month = studyStartValue.getMonth() - birthday.getMonth();
+    if (month < 0 || (month === 0 && studyStartValue.getDate() < birthday.getDate())) {
+      studentEntryAge -= 1;
+    }
+
+    console.log(`studentEntryAge, ${studentEntryAge},
+     studyStartValue, ${studyStartValue},
+     birthday.getFullYear(), ${birthday.getFullYear()},`);
+
     let checkedDate = false;
-    if (startDate.getTime() <= birthday.getTime() && birthday.getTime() < currentDate.getTime()) {
+    if (startDate.getTime() <= birthday.getTime() && birthday.getTime() < currentDate.getTime() && studentEntryAge >= entryAge) {
       checkedDate = date;
     };
     return checkedDate;
@@ -213,8 +246,8 @@
         console.log('checkedInput', checkedInput);
         break;
       case 'date':
-        checkedInput = validateDate(inputValue);
-        alertText = `Введите дату от 01.01.1900 до ${currentDateLocal}`;
+        checkedInput = validateDate(inputElement);
+        alertText = `Введите дату от 01.01.1900 до ${currentDateLocal}, проверьте возраст поступающего`;
         console.log('checkedInput', checkedInput);
         break;
       case 'number':
@@ -460,6 +493,8 @@
     birthdayInput.setAttribute('type', 'date');
     studyStartInput.setAttribute('type', 'number');
     studyStartInput.setAttribute('step', '1');
+    studyStartInput.name = 'Год начала обучения';
+
     facultyInput.setAttribute('type', 'text');
 
     nameInput.value = obj.name;
@@ -478,15 +513,11 @@
       createDiv(input);
     })
 
-    // saveModalBtn.addEventListener('click', async (e) => {
     modalBody.addEventListener('submit', async (e) => {
       console.log('submit');
       e.preventDefault();
       cleanInputErrors(modalBody);
 
-      // modalFormInputs.forEach((inputElement) => {
-      //   validateInput(inputElement);
-      // })
       const changedStudentInputs = {
         name: validateInput(nameInput),
         surname: validateInput(surnameInput),
@@ -495,8 +526,6 @@
         studyStart: validateInput(studyStartInput),
         faculty: validateInput(facultyInput),
       };
-
-      console.log('(modalBody.querySelectorAll(p)).length', (modalBody.querySelectorAll('p')).length);
 
       if (!(modalBody.querySelectorAll('p')).length) {
         const response = await fetch(`http://localhost:3000/api/students/${obj.id}`, {
@@ -514,7 +543,6 @@
           }
         });
         const sentResponse = await response.json();
-        console.log('sentResponse', sentResponse);
 
         studentsList = await refreshStudentList();
         renderStudentsTable(studentsList);
